@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX GYM — Forja o Teu Limite</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- AOS — Animate on Scroll -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+<!-- Swiper.js -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- CountUp.js via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
+
+<style>
+  :root {
+    --black: #080808;
+    --dark: #0f0f0f;
+    --card: #141414;
+    --border: #1e1e1e;
+    --green: #00ff66;
+    --green-dim: #00cc52;
+    --green-dark: #004422;
+    --green-glow: rgba(0,255,102,0.18);
+    --white: #f5f5f5;
+    --gray: #888;
+    --text: #c8c8c8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ──────────────────────────── */
+  #cursor {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--green);
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform .1s ease, width .2s, height .2s, opacity .2s;
+    box-shadow: 0 0 16px var(--green);
+  }
+  #cursor-ring {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--green);
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform .15s ease, width .25s, height .25s, opacity .2s;
+    opacity: .5;
+  }
+  body:hover #cursor { opacity: 1; }
+
+  /* ── SCROLLBAR ────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
+
+  /* ── NOISE OVERLAY ──────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: .4;
+  }
+
+  /* ── NAVBAR ─────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%;
+    background: rgba(8,8,8,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: padding .3s;
+  }
+  nav.scrolled { padding: .8rem 5%; }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-shadow: 0 0 20px var(--green);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--white); }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-decoration: none;
+    position: relative;
+    transition: color .3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--green);
+    transition: width .3s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    background: var(--green);
+    color: var(--black) !important;
+    padding: .5rem 1.4rem;
+    border-radius: 2px;
+    font-weight: 700 !important;
+    letter-spacing: 2px;
+    transition: box-shadow .3s, transform .2s !important;
+  }
+  .nav-cta:hover { box-shadow: 0 0 20px var(--green); transform: translateY(-1px) !important; }
+  .nav-cta::after { display: none !important; }
+
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 26px; height: 2px; background: var(--green); transition: .3s; }
+
+  /* ── HERO ────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 0 5%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 70% 50%, rgba(0,255,102,.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 30% 80%, rgba(0,255,102,.04) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    opacity: .4;
+  }
+
+  .hero-content { position: relative; z-index: 1; max-width: 720px; }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: .6rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .75rem; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--green);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--green-dark);
+    padding: .35rem .9rem;
+    background: rgba(0,255,102,.05);
+  }
+  .hero-tag::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,255,102,.4); }
+    50% { box-shadow: 0 0 0 8px rgba(0,255,102,0); }
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4.5rem, 12vw, 9rem);
+    line-height: .92;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title .line { display: block; }
+  .hero-title .green { color: var(--green); text-shadow: 0 0 40px rgba(0,255,102,.5); }
+
+  .hero-sub {
+    font-size: 1.05rem; line-height: 1.7;
+    color: var(--text); max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: var(--green);
+    color: var(--black);
+    padding: .9rem 2.2rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .9rem; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: box-shadow .3s, transform .2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-primary:hover { box-shadow: 0 0 30px var(--green); transform: translateY(-2px); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: transparent;
+    color: var(--white);
+    padding: .9rem 2.2rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .9rem; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color .3s, color .3s;
+  }
+  .btn-ghost:hover { border-color: var(--green); color: var(--green); }
+
+  .hero-scroll {
+    position: absolute; bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: .5rem;
+    color: var(--gray); font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .hero-scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(var(--green), transparent);
+    animation: scrollLine 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── STATS ────────────────────────────────────── */
+  #stats {
+    padding: 4rem 5%;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--dark);
+  }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4.5rem;
+    line-height: 1;
+    color: var(--green);
+    text-shadow: 0 0 30px rgba(0,255,102,.4);
+  }
+  .stat-suffix { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; }
+  .stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .75rem; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gray);
+    margin-top: .3rem;
+  }
+
+  /* ── SECTION COMMONS ─────────────────────────── */
+  section { padding: 7rem 5%; }
+
+  .section-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--green);
+    margin-bottom: .8rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--text); font-size: 1rem;
+    line-height: 1.7; max-width: 500px;
+  }
+
+  .section-header { margin-bottom: 4rem; }
+
+  /* ── SERVICES ────────────────────────────────── */
+  #services { background: var(--dark); }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; }
+
+  .service-card {
+    background: var(--card);
+    padding: 2.5rem 2rem;
+    position: relative; overflow: hidden;
+    border: 1px solid var(--border);
+    transition: border-color .3s, transform .3s;
+    cursor: default;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,255,102,.07) 0%, transparent 60%);
+    opacity: 0; transition: opacity .4s;
+  }
+  .service-card:hover { border-color: var(--green); transform: translateY(-4px); }
+  .service-card:hover::before { opacity: 1; }
+
+  .service-icon {
+    width: 56px; height: 56px;
+    background: rgba(0,255,102,.08);
+    border: 1px solid var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: var(--green);
+    margin-bottom: 1.5rem;
+    transition: box-shadow .3s;
+  }
+  .service-card:hover .service-icon { box-shadow: 0 0 20px var(--green-glow); }
+
+  .service-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 1px;
+    margin-bottom: .8rem;
+  }
+  .service-card p { color: var(--text); font-size: .92rem; line-height: 1.7; }
+
+  .service-num {
+    position: absolute; bottom: 1.5rem; right: 2rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem; color: rgba(255,255,255,.03); line-height: 1;
+  }
+
+  /* ── PLANS ────────────────────────────────────── */
+  #plans { background: var(--black); }
+  .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    position: relative; overflow: hidden;
+    transition: transform .3s, border-color .3s;
+  }
+  .plan-card.featured {
+    border-color: var(--green);
+    background: linear-gradient(160deg, rgba(0,255,102,.06) 0%, var(--card) 60%);
+  }
+  .plan-card.featured::before {
+    content: 'MAIS POPULAR';
+    position: absolute; top: 1.2rem; right: -2rem;
+    background: var(--green); color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .65rem; font-weight: 700; letter-spacing: 2px;
+    padding: .3rem 2.5rem;
+    transform: rotate(45deg) translate(5px, -5px);
+    transform-origin: right top;
+  }
+  .plan-card:hover { transform: translateY(-5px); border-color: var(--green); }
+
+  .plan-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .75rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 1rem;
+  }
+  .plan-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem; line-height: 1; margin-bottom: .3rem;
+  }
+  .plan-price span { font-size: 1.5rem; vertical-align: top; margin-top: .6rem; display: inline-block; }
+  .plan-freq { color: var(--gray); font-size: .85rem; margin-bottom: 2rem; }
+
+  .plan-features { list-style: none; margin-bottom: 2.5rem; }
+  .plan-features li {
+    padding: .6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .9rem; color: var(--text);
+    display: flex; align-items: center; gap: .7rem;
+  }
+  .plan-features li i { color: var(--green); font-size: .75rem; }
+  .plan-features li.off { opacity: .35; }
+  .plan-features li.off i { color: var(--gray); }
+
+  /* ── TRAINERS ─────────────────────────────────── */
+  #trainers { background: var(--dark); }
+  .trainers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+  .trainer-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden; position: relative;
+    transition: border-color .3s;
+  }
+  .trainer-card:hover { border-color: var(--green); }
+
+  .trainer-img {
+    width: 100%; aspect-ratio: 3/4;
+    background: var(--border);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+  }
+  .trainer-img-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(0,255,102,.05), transparent);
+  }
+  .trainer-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.9) 0%, transparent 50%);
+  }
+  .trainer-socials {
+    position: absolute; top: 1rem; right: 1rem;
+    display: flex; flex-direction: column; gap: .5rem;
+    opacity: 0; transform: translateX(10px);
+    transition: opacity .3s, transform .3s;
+  }
+  .trainer-card:hover .trainer-socials { opacity: 1; transform: translateX(0); }
+  .trainer-social {
+    width: 36px; height: 36px;
+    background: rgba(0,255,102,.15);
+    border: 1px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green); font-size: .8rem; text-decoration: none;
+    transition: background .2s;
+  }
+  .trainer-social:hover { background: var(--green); color: var(--black); }
+
+  .trainer-info { padding: 1.5rem; }
+  .trainer-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; letter-spacing: 1px; margin-bottom: .2rem;
+  }
+  .trainer-role {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--green);
+  }
+
+  /* ── TESTIMONIALS (SWIPER) ─────────────────── */
+  #testimonials { background: var(--black); }
+
+  .swiper-testimonials { padding-bottom: 3rem !important; }
+
+  .testimonial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    position: relative;
+  }
+
+  .testimonial-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem; line-height: .7;
+    color: var(--green); opacity: .3;
+    margin-bottom: 1rem;
+  }
+  .testimonial-text {
+    font-size: .95rem; line-height: 1.8; color: var(--text);
+    margin-bottom: 2rem;
+  }
+  .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+  .testimonial-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--green-dark); border: 2px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .testimonial-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .9rem; font-weight: 600; letter-spacing: 1px;
+  }
+  .testimonial-stars { color: var(--green); font-size: .75rem; margin-top: .2rem; }
+
+  .swiper-pagination-bullet { background: var(--gray) !important; }
+  .swiper-pagination-bullet-active { background: var(--green) !important; }
+
+  /* ── SCHEDULE ─────────────────────────────────── */
+  #schedule { background: var(--dark); }
+
+  .schedule-tabs { display: flex; gap: 0; margin-bottom: 2rem; border: 1px solid var(--border); width: fit-content; }
+  .tab-btn {
+    padding: .7rem 1.8rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .8rem; letter-spacing: 3px; text-transform: uppercase;
+    background: transparent; border: none; color: var(--gray);
+    cursor: pointer; transition: .3s; position: relative;
+  }
+  .tab-btn.active { background: var(--green); color: var(--black); font-weight: 700; }
+
+  .schedule-table { width: 100%; border-collapse: collapse; }
+  .schedule-table th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gray); padding: .8rem 1.2rem;
+    border-bottom: 1px solid var(--border); text-align: left;
+  }
+  .schedule-table td {
+    padding: 1rem 1.2rem; border-bottom: 1px solid var(--border);
+    font-size: .9rem; color: var(--text);
+  }
+  .schedule-table tr:hover td { background: rgba(0,255,102,.03); color: var(--white); }
+  .class-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; margin-right: .6rem;
+  }
+  .class-badge {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .65rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: .2rem .7rem; background: rgba(0,255,102,.1);
+    border: 1px solid var(--green-dark); color: var(--green);
+  }
+
+  /* ── GALLERY ─────────────────────────────────── */
+  #gallery { background: var(--black); padding: 5rem 5%; }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 200px);
+    gap: 4px;
+  }
+  .gallery-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    cursor: pointer;
+    transition: .3s;
+  }
+  .gallery-item:first-child { grid-column: span 2; grid-row: span 2; font-size: 5rem; }
+  .gallery-item::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(0,255,102,.08);
+    opacity: 0; transition: opacity .3s;
+  }
+  .gallery-item:hover::after { opacity: 1; }
+  .gallery-item:hover { border-color: var(--green); }
+
+  .gallery-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--dark), var(--card));
+  }
+  .gallery-label {
+    position: absolute; bottom: 1rem; left: 1rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--green); z-index: 1;
+  }
+
+  /* ── CONTACT ─────────────────────────────────── */
+  #contact { background: var(--dark); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
+  .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+  .contact-item { display: flex; gap: 1rem; align-items: flex-start; }
+  .contact-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(0,255,102,.08);
+    border: 1px solid var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green); font-size: .9rem;
+  }
+  .contact-item-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gray); margin-bottom: .3rem;
+  }
+  .contact-item-value { font-size: .95rem; color: var(--white); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .form-group { display: flex; flex-direction: column; gap: .4rem; }
+  .form-group label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gray);
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--white); padding: .85rem 1rem;
+    font-family: 'Barlow', sans-serif; font-size: .9rem;
+    outline: none; transition: border-color .3s;
+    resize: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--green);
+  }
+  .form-group select option { background: var(--card); }
+
+  /* ── FOOTER ─────────────────────────────────── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    padding: 4rem 5% 2rem;
+  }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
+
+  .footer-brand p { color: var(--text); font-size: .9rem; line-height: 1.7; margin: 1rem 0 1.5rem; max-width: 280px; }
+
+  .footer-socials { display: flex; gap: .6rem; }
+  .footer-social {
+    width: 38px; height: 38px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray); text-decoration: none; font-size: .85rem;
+    transition: .3s;
+  }
+  .footer-social:hover { border-color: var(--green); color: var(--green); background: rgba(0,255,102,.05); }
+
+  .footer-col h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 1.2rem;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+  .footer-col ul a {
+    color: var(--text); text-decoration: none; font-size: .88rem;
+    transition: color .2s;
+  }
+  .footer-col ul a:hover { color: var(--green); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: .8rem; color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px;
+  }
+
+  /* ── FLOATING WHATSAPP ────────────────────────── */
+  .whatsapp-float {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 56px; height: 56px;
+    background: #25D366; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 1.5rem; text-decoration: none;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(37,211,102,.4);
+    animation: float 3s ease-in-out infinite;
+    transition: transform .2s;
+  }
+  .whatsapp-float:hover { transform: scale(1.1); }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ── MOBILE MENU ─────────────────────────────── */
+  .mobile-menu {
+    display: none; position: fixed; inset: 0;
+    background: rgba(8,8,8,.97); backdrop-filter: blur(20px);
+    z-index: 999; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; letter-spacing: 3px; color: var(--white);
+    text-decoration: none; transition: color .2s;
+  }
+  .mobile-menu a:hover { color: var(--green); }
+  .close-menu {
+    position: absolute; top: 1.5rem; right: 5%;
+    background: none; border: none; color: var(--gray);
+    font-size: 1.5rem; cursor: pointer;
+  }
+
+  /* ── SCROLL TO TOP ───────────────────────────── */
+  #scrollTop {
+    position: fixed; bottom: 6rem; right: 2rem;
+    width: 44px; height: 44px;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--gray); font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 998;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s, border-color .3s, color .3s;
+  }
+  #scrollTop.visible { opacity: 1; pointer-events: all; }
+  #scrollTop:hover { border-color: var(--green); color: var(--green); }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 1024px) {
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .trainers-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .services-grid { grid-template-columns: 1fr; }
+    .plans-grid { grid-template-columns: 1fr; }
+    .trainers-grid { grid-template-columns: 1fr 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+    .gallery-item:first-child { grid-column: span 2; }
+    .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    #schedule { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">APEX<span>GYM</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Serviços</a></li>
+    <li><a href="#plans">Planos</a></li>
+    <li><a href="#trainers">Treinadores</a></li>
+    <li><a href="#schedule">Horários</a></li>
+    <li><a href="#contact">Contacto</a></li>
+    <li><a href="#contact" class="nav-cta">Inscrever</a></li>
+  </ul>
+  <div class="hamburger" onclick="openMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-menu" onclick="closeMenu()"><i class="fas fa-times"></i></button>
+  <a href="#services" onclick="closeMenu()">Serviços</a>
+  <a href="#plans" onclick="closeMenu()">Planos</a>
+  <a href="#trainers" onclick="closeMenu()">Treinadores</a>
+  <a href="#schedule" onclick="closeMenu()">Horários</a>
+  <a href="#contact" onclick="closeMenu()">Contacto</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag" data-aos="fade-right">Quelimane · Moçambique</div>
+    <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+      <span class="line">FORJA</span>
+      <span class="line green">O TEU</span>
+      <span class="line">LIMITE</span>
+    </h1>
+    <p class="hero-sub" data-aos="fade-up" data-aos-delay="200">
+      Equipamento profissional. Treinadores certificados. Resultados reais. A academia que transforma corpos e mentes em Quelimane.
+    </p>
+    <div class="hero-btns" data-aos="fade-up" data-aos-delay="300">
+      <a href="#contact" class="btn-primary"><i class="fas fa-bolt"></i> Começar Agora</a>
+      <a href="#plans" class="btn-ghost"><i class="fas fa-list"></i> Ver Planos</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-grid">
+    <div class="stat-item" data-aos="fade-up">
+      <div class="stat-number"><span id="c1">0</span><span class="stat-suffix">+</span></div>
+      <div class="stat-label">Membros Activos</div>
+    </div>
+    <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+      <div class="stat-number"><span id="c2">0</span><span class="stat-suffix"></span></div>
+      <div class="stat-label">Treinadores Certificados</div>
+    </div>
+    <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+      <div class="stat-number"><span id="c3">0</span><span class="stat-suffix">+</span></div>
+      <div class="stat-label">Equipamentos</div>
+    </div>
+    <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+      <div class="stat-number"><span id="c4">0</span><span class="stat-suffix"></span></div>
+      <div class="stat-label">Anos de Experiência</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header">
+    <div class="section-tag" data-aos="fade-up">O que oferecemos</div>
+    <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">NOSSOS<br><span style="color:var(--green)">SERVIÇOS</span></h2>
+    <p class="section-sub" data-aos="fade-up" data-aos-delay="200">Tudo que precisas para alcançar os teus objetivos num só lugar.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card" data-aos="fade-up">
+      <div class="service-icon"><i class="fas fa-dumbbell"></i></div>
+      <h3>Musculação</h3>
+      <p>Sala de pesos completa com equipamento de última geração para o teu treino de força e hipertrofia.</p>
+      <div class="service-num">01</div>
+    </div>
+    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="service-icon"><i class="fas fa-fire"></i></div>
+      <h3>CrossFit</h3>
+      <p>Treinos funcionais de alta intensidade que desafiam o teu corpo de formas diferentes todos os dias.</p>
+      <div class="service-num">02</div>
+    </div>
+    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+      <div class="service-icon"><i class="fas fa-heart-pulse"></i></div>
+      <h3>Cardio</h3>
+      <p>Esteiras, bicicletas e elípticas modernas para melhorar a tua resistência cardiovascular.</p>
+      <div class="service-num">03</div>
+    </div>
+    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="service-icon"><i class="fas fa-person-running"></i></div>
+      <h3>Personal Trainer</h3>
+      <p>Acompanhamento individualizado com plano de treino e nutrição personalizado para os teus objetivos.</p>
+      <div class="service-num">04</div>
+    </div>
+    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+      <div class="service-icon"><i class="fas fa-leaf"></i></div>
+      <h3>Yoga & Pilates</h3>
+      <p>Equilíbrio entre corpo e mente através de práticas milenares adaptadas ao estilo de vida moderno.</p>
+      <div class="service-num">05</div>
+    </div>
+    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="service-icon"><i class="fas fa-boxing-glove"></i></div>
+      <h3>Artes Marciais</h3>
+      <p>Boxe, Muay Thai e MMA com instrutores experientes. Disciplina, força e autoconfiança.</p>
+      <div class="service-num">06</div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+  <div class="section-header">
+    <div class="section-tag" data-aos="fade-up">Escolhe o teu</div>
+    <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">PLANOS &<br><span style="color:var(--green)">PREÇOS</span></h2>
+  </div>
+  <div class="plans-grid">
+    <!-- BASIC -->
+    <div class="plan-card" data-aos="fade-up">
+      <div class="plan-name">Basic</div>
+      <div class="plan-price"><span>MT</span>1.500</div>
+      <div class="plan-freq">por mês</div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check"></i> Acesso à sala de musculação</li>
+        <li><i class="fas fa-check"></i> Horários 06h–22h</li>
+        <li><i class="fas fa-check"></i> Cacifos incluídos</li>
+        <li class="off"><i class="fas fa-times"></i> Aulas de grupo</li>
+        <li class="off"><i class="fas fa-times"></i> Personal trainer</li>
+        <li class="off"><i class="fas fa-times"></i> Avaliação corporal</li>
+      </ul>
+      <a href="#contact" class="btn-ghost" style="width:100%;justify-content:center;">Escolher Plano</a>
+    </div>
+    <!-- FEATURED -->
+    <div class="plan-card featured" data-aos="fade-up" data-aos-delay="150">
+      <div class="plan-name">Pro</div>
+      <div class="plan-price"><span>MT</span>2.800</div>
+      <div class="plan-freq">por mês</div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check"></i> Acesso ilimitado</li>
+        <li><i class="fas fa-check"></i> Horários 05h–23h</li>
+        <li><i class="fas fa-check"></i> Cacifos premium</li>
+        <li><i class="fas fa-check"></i> Todas as aulas de grupo</li>
+        <li><i class="fas fa-check"></i> 2 sessões PT/mês</li>
+        <li><i class="fas fa-check"></i> Avaliação corporal mensal</li>
+      </ul>
+      <a href="#contact" class="btn-primary" style="width:100%;justify-content:center;">Escolher Plano</a>
+    </div>
+    <!-- ELITE -->
+    <div class="plan-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="plan-name">Elite</div>
+      <div class="plan-price"><span>MT</span>4.500</div>
+      <div class="plan-freq">por mês</div>
+      <ul class="plan-features">
+        <li><i class="fas fa-check"></i> Acesso VIP 24/7</li>
+        <li><i class="fas fa-check"></i> Zona privada</li>
+        <li><i class="fas fa-check"></i> Cacifo premium + toalha</li>
+        <li><i class="fas fa-check"></i> Todas as aulas</li>
+        <li><i class="fas fa-check"></i> PT ilimitado</li>
+        <li><i class="fas fa-check"></i> Plano nutricional</li>
+      </ul>
+      <a href="#contact" class="btn-ghost" style="width:100%;justify-content:center;">Escolher Plano</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRAINERS -->
+<section id="trainers">
+  <div class="section-header">
+    <div class="section-tag" data-aos="fade-up">A nossa equipa</div>
+    <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">NOSSOS<br><span style="color:var(--green)">TREINADORES</span></h2>
+  </div>
+  <div class="trainers-grid">
+    <div class="trainer-card" data-aos="fade-up">
+      <div class="trainer-img">
+        <div class="trainer-img-bg"></div>
+        💪
+        <div class="trainer-overlay"></div>
+        <div class="trainer-socials">
+          <a href="#" class="trainer-social"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="trainer-social"><i class="fab fa-facebook"></i></a>
+        </div>
+      </div>
+      <div class="trainer-info">
+        <div class="trainer-name">Carlos Melo</div>
+        <div class="trainer-role">Musculação & Força</div>
+      </div>
+    </div>
+    <div class="trainer-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="trainer-img" style="font-size:4rem;">🥊
+        <div class="trainer-img-bg"></div>
+        <div class="trainer-overlay"></div>
+        <div class="trainer-socials">
+          <a href="#" class="trainer-social"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="trainer-social"><i class="fab fa-facebook"></i></a>
+        </div>
+      </div>
+      <div class="trainer-info">
+        <div class="trainer-name">Ana Machava</div>
+        <div class="trainer-role">CrossFit & MMA</div>
+      </div>
+    </div>
+    <div class="trainer-card" data-aos="fade-up" data-aos-delay="200">
+      <div class="trainer-img" style="font-size:4rem;">🧘
+        <div class="trainer-img-bg"></div>
+        <div class="trainer-overlay"></div>
+        <div class="trainer-socials">
+          <a href="#" class="trainer-social"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="trainer-social"><i class="fab fa-facebook"></i></a>
+        </div>
+      </div>
+      <div class="trainer-info">
+        <div class="trainer-name">Fátima Cossa</div>
+        <div class="trainer-role">Yoga & Pilates</div>
+      </div>
+    </div>
+    <div class="trainer-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="trainer-img" style="font-size:4rem;">🏃
+        <div class="trainer-img-bg"></div>
+        <div class="trainer-overlay"></div>
+        <div class="trainer-socials">
+          <a href="#" class="trainer-social"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="trainer-social"><i class="fab fa-facebook"></i></a>
+        </div>
+      </div>
+      <div class="trainer-info">
+        <div class="trainer-name">Tomás Nhantumbo</div>
+        <div class="trainer-role">Cardio & Nutrição</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS (SWIPER) -->
+<section id="testimonials">
+  <div class="section-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;">
+    <div>
+      <div class="section-tag" data-aos="fade-up">Depoimentos</div>
+      <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">O QUE DIZEM<br><span style="color:var(--green)">OS NOSSOS</span></h2>
+    </div>
+    <div class="swiper-nav-btns" style="display:flex;gap:.5rem;" data-aos="fade-left">
+      <button class="swiper-prev-btn btn-ghost" style="width:48px;height:48px;padding:0;justify-content:center;"><i class="fas fa-arrow-left"></i></button>
+      <button class="swiper-next-btn btn-ghost" style="width:48px;height:48px;padding:0;justify-content:center;"><i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+  <div class="swiper swiper-testimonials" data-aos="fade-up" data-aos-delay="100">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">Perdi 18kg em 5 meses com acompanhamento do Personal. A equipa da APEX é incrível, sempre motivados e profissionais. Mudou completamente a minha vida!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">🙋‍♀️</div>
+            <div>
+              <div class="testimonial-name">Maria João</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">O melhor ginásio de Quelimane, sem dúvida. Equipamento moderno, limpo e os treinadores realmente sabem o que fazem. Recomendo a todos.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">🙋‍♂️</div>
+            <div>
+              <div class="testimonial-name">Paulo Sitoe</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">Comecei o Plano Elite há 3 meses e os resultados falam por si. O plano nutricional personalizado foi o diferencial que faltava na minha rotina.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">💪</div>
+            <div>
+              <div class="testimonial-name">Sérgio Muianga</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">As aulas de CrossFit com a Ana são de outro nível. Nunca pensei que conseguiria chegar onde cheguei. Ambiente incrível e muito motivador!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">🏋️</div>
+            <div>
+              <div class="testimonial-name">Luísa Tembe</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="section-header">
+    <div class="section-tag" data-aos="fade-up">Planeia o teu treino</div>
+    <h2 class="section-title" data-aos="fade-up" data-aos-delay="100">HORÁRIO<br><span style="color:var(--green)">DE AULAS</span></h2>
+  </div>
+  <div class="schedule-tabs" data-aos="fade-up">
+    <button class="tab-btn active" onclick="switchTab(this,'segunda')">Seg</button>
+    <button class="tab-btn" onclick="switchTab(this,'terca')">Ter</button>
+    <button class="tab-btn" onclick="switchTab(this,'quarta')">Qua</button>
+    <button class="tab-btn" onclick="switchTab(this,'quinta')">Qui</button>
+    <button class="tab-btn" onclick="switchTab(this,'sexta')">Sex</button>
+    <button class="tab-btn" onclick="switchTab(this,'sabado')">Sáb</button>
+  </div>
+  <div data-aos="fade-up" data-aos-delay="100">
+    <table class="schedule-table" id="scheduleTable">
+      <thead>
+        <tr>
+          <th>Horário</th>
+          <th>Aula</th>
+          <th>Treinador</th>
+          <th>Sala</th>
+          <th>Nível</th>
+        </tr>
+      </thead>
+      <tbody id="scheduleBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-header" data-aos="fade-up">
+    <div class="section-tag">As nossas instalações</div>
+    <h2 class="section-title">GALERIA<br><span style="color:var(--green)">DA ACADEMIA</span></h2>
+  </div>
+  <div class="gallery-grid" data-aos="fade-up" data-aos-delay="100">
+    <div class="gallery-item">
+      <div class="gallery-bg"></div>
+      🏋️
+      <div class="gallery-label">Sala Principal</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg" style="background:linear-gradient(135deg,#0a1a0a,#0d1a0d)"></div>
+      🥊
+      <div class="gallery-label">Ring de Combate</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg" style="background:linear-gradient(135deg,#0a100a,#111)"></div>
+      🧘
+      <div class="gallery-label">Studio Yoga</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg"></div>
+      🚴
+      <div class="gallery-label">Zona Cardio</div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-bg" style="background:linear-gradient(135deg,#0d1a0d,#0a0a0a)"></div>
+      💪
+      <div class="gallery-label">CrossFit Box</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-grid">
+    <div data-aos="fade-right">
+      <div class="section-tag">Fala connosco</div>
+      <h2 class="section-title" style="margin-bottom:2rem;">ENTRA EM<br><span style="color:var(--green)">CONTACTO</span></h2>
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <div class="contact-item-label">Morada</div>
+            <div class="contact-item-value">Av. 25 de Setembro, Quelimane, Zambézia</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="contact-item-label">Telefone</div>
+            <div class="contact-item-value">+258 84 000 0000</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-value">info@apexgym.co.mz</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="contact-item-label">Horário</div>
+            <div class="contact-item-value">Seg–Sex: 05h–23h &nbsp;|&nbsp; Sáb–Dom: 07h–20h</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-aos="fade-left">
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome</label>
+            <input type="text" placeholder="O teu nome">
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="text" placeholder="+258 84...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="teu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Interesse</label>
+          <select>
+            <option value="">Selecciona um serviço</option>
+            <option>Musculação</option>
+            <option>CrossFit</option>
+            <option>Personal Trainer</option>
+            <option>Yoga & Pilates</option>
+            <option>Artes Marciais</option>
+            <option>Planos & Preços</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea rows="4" placeholder="Conta-nos o teu objectivo..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="submitForm()" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane"></i> Enviar Mensagem</button>
+        <div id="formMsg" style="display:none;color:var(--green);text-align:center;font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;font-size:.85rem;margin-top:.5rem;">
+          ✓ MENSAGEM ENVIADA! ENTRAREMOS EM CONTACTO EM BREVE.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="font-size:1.8rem;">APEX<span>GYM</span></a>
+      <p>A academia premium de Quelimane. Equipamento de topo, treinadores certificados e um ambiente que te vai desafiar a superar os teus limites.</p>
+      <div class="footer-socials">
+        <a href="#" class="footer-social"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="footer-social"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="footer-social"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="footer-social"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Serviços</h4>
+      <ul>
+        <li><a href="#">Musculação</a></li>
+        <li><a href="#">CrossFit</a></li>
+        <li><a href="#">Personal Trainer</a></li>
+        <li><a href="#">Yoga & Pilates</a></li>
+        <li><a href="#">Artes Marciais</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Links</h4>
+      <ul>
+        <li><a href="#">Sobre Nós</a></li>
+        <li><a href="#">Planos</a></li>
+        <li><a href="#">Treinadores</a></li>
+        <li><a href="#">Galeria</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Horário</h4>
+      <ul>
+        <li><a href="#">Seg–Sex: 05h–23h</a></li>
+        <li><a href="#">Sábado: 07h–20h</a></li>
+        <li><a href="#">Domingo: 08h–18h</a></li>
+        <li><a href="#contact">Contactar</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 APEX GYM — Quelimane, Moçambique</span>
+    <span>Feito com <span style="color:var(--green)">♥</span> para atletas</span>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/258840000000" class="whatsapp-float" target="_blank">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- SCROLL TO TOP -->
+<button id="scrollTop" onclick="scrollToTop()"><i class="fas fa-arrow-up"></i></button>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js"></script>
+
+<script>
+// AOS init
+AOS.init({ duration: 700, once: true, easing: 'ease-out-cubic' });
+
+// CUSTOM CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mouseX=0,mouseY=0,ringX=0,ringY=0;
+document.addEventListener('mousemove', e => { mouseX=e.clientX; mouseY=e.clientY; cursor.style.left=mouseX+'px'; cursor.style.top=mouseY+'px'; });
+function animateRing(){ ringX+=(mouseX-ringX)*.12; ringY+=(mouseY-ringY)*.12; ring.style.left=ringX+'px'; ring.style.top=ringY+'px'; requestAnimationFrame(animateRing); }
+animateRing();
+document.querySelectorAll('a,button,.service-card,.plan-card,.trainer-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='60px'; ring.style.height='60px'; });
+  el.addEventListener('mouseleave',()=>{ cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='40px'; ring.style.height='40px'; });
+});
+
+// NAVBAR SCROLL
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 80);
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// MOBILE MENU
+function openMenu(){ document.getElementById('mobileMenu').classList.add('open'); }
+function closeMenu(){ document.getElementById('mobileMenu').classList.remove('open'); }
+
+// SCROLL TOP
+function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+// COUNTUP
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ startCounters(); observer.disconnect(); } });
+},{threshold:.3});
+observer.observe(document.getElementById('stats'));
+
+function startCounters(){
+  new countUp.CountUp('c1',1200,{duration:2}).start();
+  new countUp.CountUp('c2',18,{duration:2}).start();
+  new countUp.CountUp('c3',80,{duration:2}).start();
+  new countUp.CountUp('c4',8,{duration:2}).start();
+}
+
+// SWIPER
+const swiper = new Swiper('.swiper-testimonials', {
+  slidesPerView:1,
+  spaceBetween:24,
+  loop:true,
+  pagination:{ el:'.swiper-pagination', clickable:true },
+  navigation:{ prevEl:'.swiper-prev-btn', nextEl:'.swiper-next-btn' },
+  breakpoints:{ 768:{ slidesPerView:2 }, 1024:{ slidesPerView:3 } }
+});
+
+// SCHEDULE
+const scheduleData = {
+  segunda:[
+    {time:'06:00',class:'Musculação Livre',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+    {time:'07:30',class:'CrossFit Matinal',trainer:'Ana Machava',room:'Box CF',level:'Intermédio'},
+    {time:'09:00',class:'Yoga Flow',trainer:'Fátima Cossa',room:'Studio',level:'Iniciante'},
+    {time:'12:00',class:'Cardio HIIT',trainer:'Tomás Nhantumbo',room:'Sala B',level:'Avançado'},
+    {time:'18:00',class:'CrossFit Power',trainer:'Ana Machava',room:'Box CF',level:'Avançado'},
+    {time:'19:30',class:'Pilates',trainer:'Fátima Cossa',room:'Studio',level:'Todos'},
+  ],
+  terca:[
+    {time:'06:00',class:'Musculação',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+    {time:'08:00',class:'Yoga Matinal',trainer:'Fátima Cossa',room:'Studio',level:'Iniciante'},
+    {time:'10:00',class:'Boxe Técnico',trainer:'Ana Machava',room:'Ring',level:'Iniciante'},
+    {time:'17:30',class:'Musculação',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+    {time:'19:00',class:'HIIT',trainer:'Tomás Nhantumbo',room:'Sala B',level:'Intermédio'},
+  ],
+  quarta:[
+    {time:'06:00',class:'CrossFit',trainer:'Ana Machava',room:'Box CF',level:'Intermédio'},
+    {time:'09:00',class:'Pilates',trainer:'Fátima Cossa',room:'Studio',level:'Todos'},
+    {time:'12:00',class:'Musculação',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+    {time:'18:00',class:'Muay Thai',trainer:'Ana Machava',room:'Ring',level:'Todos'},
+    {time:'19:30',class:'Yoga',trainer:'Fátima Cossa',room:'Studio',level:'Todos'},
+  ],
+  quinta:[
+    {time:'07:00',class:'Cardio',trainer:'Tomás Nhantumbo',room:'Sala B',level:'Todos'},
+    {time:'09:00',class:'CrossFit',trainer:'Ana Machava',room:'Box CF',level:'Avançado'},
+    {time:'18:00',class:'Musculação',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+    {time:'19:00',class:'Boxe',trainer:'Ana Machava',room:'Ring',level:'Intermédio'},
+  ],
+  sexta:[
+    {time:'06:00',class:'CrossFit',trainer:'Ana Machava',room:'Box CF',level:'Todos'},
+    {time:'09:00',class:'Yoga Flow',trainer:'Fátima Cossa',room:'Studio',level:'Iniciante'},
+    {time:'12:00',class:'HIIT',trainer:'Tomás Nhantumbo',room:'Sala B',level:'Avançado'},
+    {time:'18:00',class:'Musculação',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+    {time:'19:30',class:'Pilates Avançado',trainer:'Fátima Cossa',room:'Studio',level:'Avançado'},
+  ],
+  sabado:[
+    {time:'07:00',class:'CrossFit Weekend',trainer:'Ana Machava',room:'Box CF',level:'Todos'},
+    {time:'09:00',class:'Yoga Intensivo',trainer:'Fátima Cossa',room:'Studio',level:'Todos'},
+    {time:'11:00',class:'Musculação',trainer:'Carlos Melo',room:'Sala A',level:'Todos'},
+  ],
+};
+
+const levelColors = { 'Iniciante':'#00cc52', 'Intermédio':'#f59e0b', 'Avançado':'#ef4444', 'Todos':'#888' };
+let currentDay = 'segunda';
+
+function renderSchedule(day){
+  const rows = scheduleData[day] || [];
+  const tbody = document.getElementById('scheduleBody');
+  tbody.innerHTML = rows.map(r=>`
+    <tr>
+      <td style="color:var(--green);font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:600;letter-spacing:1px;">${r.time}</td>
+      <td><span class="class-dot" style="background:${levelColors[r.level]}"></span>${r.class}</td>
+      <td style="color:var(--gray)">${r.trainer}</td>
+      <td style="color:var(--gray)">${r.room}</td>
+      <td><span class="class-badge" style="border-color:${levelColors[r.level]};color:${levelColors[r.level]};background:${levelColors[r.level]}18">${r.level}</span></td>
+    </tr>`).join('');
+}
+renderSchedule('segunda');
+
+function switchTab(btn, day){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSchedule(day);
+}
+
+// FORM SUBMIT
+function submitForm(){
+  document.getElementById('formMsg').style.display='block';
+  setTimeout(()=>{ document.getElementById('formMsg').style.display='none'; },4000);
+}
+</script>
+</body>
+</html>
